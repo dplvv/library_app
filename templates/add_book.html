@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Добавить Новую Книгу</h2>
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="title">Название</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+
+    <div class="form-group">
+        <label for="author">Автор</label>
+        <input type="text" class="form-control" id="author" name="author" required>
+    </div>
+
+    <div class="form-group">
+        <label for="genre">Жанр</label>
+        <input type="text" class="form-control" id="genre" name="genre">
+    </div>
+
+    <div class="form-group">
+        <label for="publication_year">Год издания</label>
+        <input type="number" class="form-control" id="publication_year" name="publication_year">
+    </div>
+
+    <div class="form-group">
+        <label for="quantity">Количество экземпляров</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Описание</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="cover_image">Обложка книги</label>
+        <input type="file" class="form-control-file" id="cover_image" name="cover_image" accept="image/*">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Добавить Книгу</button>
+</form>
+{% endblock %}

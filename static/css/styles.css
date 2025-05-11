@@ -1,0 +1,14 @@
+/* Пример стилей */
+body {
+    padding-top: 60px;
+}
+@font-face {
+    font-family: "Reef";
+    src: url("../fonts/Reef.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: "Reef", sans-serif;
+}

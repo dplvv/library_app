@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Список книг</h2>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<form method="GET" action="{{ url_for('index') }}" class="mb-4">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <input type="text" class="form-control" name="title" placeholder="Название" value="{{ request.args.get('title', '') }}">
+        </div>
+        <div class="form-group col-md-3">
+            <input type="text" class="form-control" name="author" placeholder="Автор" value="{{ request.args.get('author', '') }}">
+        </div>
+        <div class="form-group col-md-3">
+            <input type="text" class="form-control" name="genre" placeholder="Жанр" value="{{ request.args.get('genre', '') }}">
+        </div>
+        <div class="form-group col-md-3">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Обложка</th>
+            <th>Название</th>
+            <th>Автор</th>
+            <th>Жанр</th>
+            <th>Год издания</th>
+            <th>Количество</th>
+            <th>Описание</th>
+            <th>Действия</th>
+            {% if session.get('user') and session['user']['role'] == 'admin' %}
+                <th>Административные действия</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+            <tr>
+                <td>
+                    {% if book.cover_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + book.cover_image) }}" alt="Обложка книги" width="100">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/default_cover.jpg') }}" alt="Обложка книги" width="100">
+                    {% endif %}
+                </td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.genre }}</td>
+                <td>{{ book.publication_year }}</td>
+                <td>{{ book.quantity }}</td>
+                <td>{{ book.description }}</td>
+                <td>
+                    {% if book.quantity > 0 %}
+                        <form action="{{ url_for('reserve_book', book_id=book.id) }}" method="POST">
+                            <button type="submit" class="btn btn-sm btn-primary">Забронировать</button>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>Недоступна</button>
+                    {% endif %}
+                </td>
+                {% if session.get('user') and session['user']['role'] == 'admin' %}
+                    <td>
+                        <a href="/edit_book/{{ book.id }}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <form action="/delete_book/{{ book.id }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- Пагинация -->
+<nav aria-label="Навигация страниц">
+    <ul class="pagination">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('index', page=page-1, title=request.args.get('title'), author=request.args.get('author'), genre=request.args.get('genre')) }}">Предыдущая</a>
+        </li>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('index', page=p, title=request.args.get('title'), author=request.args.get('author'), genre=request.args.get('genre')) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        {% if page < total_pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('index', page=page+1, title=request.args.get('title'), author=request.args.get('author'), genre=request.args.get('genre')) }}">Следующая</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endblock %}
